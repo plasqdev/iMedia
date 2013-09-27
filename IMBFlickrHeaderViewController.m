@@ -298,14 +298,18 @@
 	[_queryParams setObject:[_queryField stringValue] forKey:IMBFlickrNodeProperty_Query];	
 	[_queryParams setObject:[NSString uuid] forKey:IMBFlickrNodeProperty_UUID];
 
+	// Create a new query object before adding to the parser otherwise we'll just update
+	// the one that's already in the list, d'oh!
+	NSDictionary *newQuery = [[_queryParams copy] autorelease];
+
 	//	save custom query to preferences...
-	[_parser addCustomQuery:_queryParams];
+	[_parser addCustomQuery:newQuery];
 	[_parser saveCustomQueries];
 	
 	//	update ui...
 	IMBLibraryController* libController = [IMBLibraryController sharedLibraryControllerWithMediaType:[_parser mediaType]];
 	[libController reloadNode:_parser.flickrRootNode];	
-	[IMBFlickrNode sendSelectNodeNotificationForDict:_queryParams];
+	[IMBFlickrNode sendSelectNodeNotificationForDict:newQuery];
 }
 
 
